@@ -22,7 +22,7 @@ Start at [plan/week-1.md](plan/week-1.md).
 | 4 Billing, Pricing and Support | 12% | [04-billing-pricing-support.md](notes/04-billing-pricing-support.md) | 1 |
 
 Every note ends with a 10-question self-test.
-[notes/00-baseline.md](notes/00-baseline.md) lists every task statement in all four domains, for reference.
+[notes/00-baseline.md](notes/00-baseline.md) is every task statement in all four domains with a self-rating column: fill it on day 1 and again on Wed 25.
 
 ## Every evening
 
