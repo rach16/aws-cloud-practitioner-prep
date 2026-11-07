@@ -9,7 +9,6 @@ one category, then two sections of [exam-traps.md](../notes/exam-traps.md).
 
 - [ ] **Fri 6** · Setup, 60 min
   - [ ] Read the [official exam guide](https://docs.aws.amazon.com/aws-certification/latest/examguides/cloud-practitioner-02.html) end to end, 20 min. Note anything in the in-scope list you cannot place.
-  - [ ] Fill the Baseline column of [notes/00-baseline.md](../notes/00-baseline.md), every domain, honestly, 15 min. This is the only time a 0 is useful.
   - [ ] Take the free Skill Builder official practice question set cold, 20 questions. Log the score in [practice/log.md](../practice/log.md) as the baseline.
   - [ ] Buy the Tutorials Dojo practice exam set, or confirm Skill Builder access. Do not open it yet.
 - [ ] **Sat 7** · Cloud concepts, part one, 90 min

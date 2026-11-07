@@ -24,7 +24,6 @@ Support table and pricing models from memory on Mon and Wed.
   - [ ] Full-length, timed, no notes. Log by domain. Do not review tonight.
 - [ ] **Wed 25** · Review practice exam 2, 60 min
   - [ ] Same drill as week 2. Compare the per-domain split with practice exam 1. The domain that did not improve is Saturday's priority.
-  - [ ] Fill the Recheck column of [notes/00-baseline.md](../notes/00-baseline.md). Anything still 0 or 1 goes on the Sat 28 reading list.
 - [ ] **Thu 26** · Thanksgiving. Buffer.
   - [ ] Either nothing, or the 15-minute catalogue review and nothing else. Use it to absorb a slipped day from earlier in the week.
 
