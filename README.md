@@ -33,6 +33,10 @@ The four areas off the SAA path, and where they live here:
 Confirm the weights below on the official exam guide before the first practice
 exam. They are CLF-C02 as of November 2026.
 
+The full blueprint, every task statement across all four domains with a
+self-rating column, is [notes/00-baseline.md](notes/00-baseline.md). It is
+the map; the week plans are the route.
+
 | Domain | Weight | Notes | Week |
 |---|---|---|---|
 | 1 · Cloud Concepts | 24% | [notes/01-cloud-concepts.md](notes/01-cloud-concepts.md) | 1 |
@@ -114,6 +118,12 @@ material already covered by the two other certifications.
 - Notes are terse: tables for comparisons, one line per fact, **Memorise:**
   on anything that has to be known cold. If a note needs a paragraph to
   explain, it is SAA material and belongs in that repo.
+- Each project README and the three note sections that need a picture
+  (global infrastructure, shared responsibility, policy evaluation) carry a
+  Mermaid diagram in the AWS brand palette, nested the way the SAA repo draws
+  them: Global Infrastructure outside, Regions inside, services where they
+  live. Orange is a service, blue a network or policy layer, green a store or
+  observer, navy anything outside AWS. Dotted arrows carry no traffic.
 - Every practice score goes in [practice/log.md](practice/log.md), split by
   domain. The target before the exam is two consecutive full-length practice
   exams above 80%.

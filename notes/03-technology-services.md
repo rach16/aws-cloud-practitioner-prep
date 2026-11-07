@@ -37,6 +37,50 @@ What it tests: service recognition. A one-line scenario, four service names, pic
 
 ## 3.2 Global infrastructure
 
+```mermaid
+graph TB
+    U["Users"]
+    subgraph AWS["AWS Global Infrastructure"]
+        subgraph EDGE["Edge network: 600+ points of presence, not in a Region"]
+            CF["CloudFront, Route 53, WAF, Shield, Global Accelerator"]
+        end
+        subgraph REG["Region: a geographic area, 3+ AZs, isolated from every other Region"]
+            subgraph AZA["AZ a: one or more data centres"]
+                A1["Your instances"]
+            end
+            subgraph AZB["AZ b"]
+                A2["Your instances"]
+            end
+            subgraph AZC["AZ c"]
+                A3["..."]
+            end
+        end
+        LZ["Local Zone<br/>a slice of a Region placed in a city, single-digit ms"]
+        WL["Wavelength Zone<br/>inside a 5G carrier network"]
+        OP["Outposts<br/>AWS racks in your own data centre"]
+    end
+    U ==> CF
+    CF ==>|"cache miss"| A1
+    A1 <-->|"low-latency links: Multi-AZ is high availability"| A2
+    REG -.->|"extends"| LZ
+    REG -.->|"extends"| WL
+    REG -.->|"extends"| OP
+
+    classDef aws fill:#FF9900,color:#232F3E,stroke:#CC7A00
+    classDef edge fill:#146EB4,color:#FFFFFF,stroke:#0F5389
+    classDef store fill:#569A31,color:#FFFFFF,stroke:#417525
+    classDef ext fill:#232F3E,color:#FFFFFF,stroke:#131A23
+
+    class CF,LZ,WL,OP aws
+    class A1,A2,A3 edge
+    class U ext
+```
+
+Edge locations are not Regions and hold no instances. Local Zones, Wavelength
+and Outposts are all a Region reaching somewhere else; the exam asks which
+"somewhere" each one is.
+
+
 | Construct | Is | Count / fact | Keyword |
 |---|---|---|---|
 | **Region** | Geographic area, isolated, 3+ AZs in every new Region | 30+ | "data residency", "compliance" |

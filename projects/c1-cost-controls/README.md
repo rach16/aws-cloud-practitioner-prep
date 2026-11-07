@@ -10,6 +10,45 @@ the console is free.
 
 **Time:** 45 minutes.
 
+## How it fits together
+
+```mermaid
+graph LR
+    YOU["You<br/>console and CLI"]
+    CALC["Pricing Calculator<br/>estimate before building<br/>share link goes in results.md"]
+    subgraph AWS["AWS account"]
+        USAGE["Metered usage<br/>every service, every Region"]
+        subgraph BILL["Billing and Cost Management"]
+            BUD["Budgets<br/>alert at 50% and 80% actual<br/>100% forecast"]
+            CE["Cost Explorer<br/>last 3 months by service"]
+            TAGS["Cost allocation tag: project<br/>inactive until activated"]
+            FT["Free Tier usage page"]
+        end
+        MAIL["Email notification"]
+    end
+    YOU -.->|"before: what will it cost?"| CALC
+    USAGE ==> BUD
+    USAGE ==> CE
+    USAGE ==> FT
+    TAGS -.->|"groups spend by project"| CE
+    BUD ==>|"threshold crossed"| MAIL
+    MAIL ==> YOU
+    YOU ==>|"after: what did it cost?"| CE
+
+    classDef aws fill:#FF9900,color:#232F3E,stroke:#CC7A00
+    classDef edge fill:#146EB4,color:#FFFFFF,stroke:#0F5389
+    classDef store fill:#569A31,color:#FFFFFF,stroke:#417525
+    classDef ext fill:#232F3E,color:#FFFFFF,stroke:#131A23
+
+    class BUD,CE,TAGS,FT aws
+    class USAGE edge
+    class YOU,CALC,MAIL ext
+```
+
+The Pricing Calculator sits outside the account because it needs no account:
+it is an estimate, not a measurement. Everything inside is fed by metered
+usage after the fact, and Budgets is the only one that reaches back out to you.
+
 ## Steps
 
 Replace `ACCOUNT` with the output of

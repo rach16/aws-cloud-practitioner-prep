@@ -16,6 +16,51 @@ this scale.
 Region: whichever one the SAA repo's S0 sweeper covers, so it can confirm the
 teardown. Replace `BUCKET` with a globally unique name.
 
+## How it fits together
+
+```mermaid
+graph TB
+    YOU["You<br/>curl and the CLI, from your IP"]
+    subgraph AWS["AWS Global Infrastructure"]
+        subgraph USW2["Region: us-west-2"]
+            subgraph VPC["Default VPC"]
+                subgraph AZ["AZ: us-west-2a"]
+                    SG["Security group<br/>HTTP from My IP only"]
+                    EC2["EC2 t3.micro, Amazon Linux 2023, httpd<br/>public IP: new one after stop and start<br/>private IP: kept"]
+                    EBS["EBS root volume<br/>kept on stop, deleted on terminate"]
+                end
+            end
+            S3["S3 bucket<br/>versioning on<br/>two versions of note.txt"]
+            LAM["Lambda: clf-hello<br/>execution role"]
+            LOGS["CloudWatch Logs<br/>/aws/lambda/clf-hello<br/>created by the first invoke"]
+            CW["CloudWatch metrics<br/>CPUUtilization, 5-minute basic"]
+        end
+        TA["Trusted Advisor<br/>core checks on Basic"]
+        HD["Health Dashboard<br/>your events, and service history"]
+    end
+    YOU ==>|"HTTP GET"| SG
+    SG ==> EC2
+    EC2 --- EBS
+    EC2 -.->|"a data point every 5 minutes"| CW
+    YOU ==>|"aws s3 cp, twice"| S3
+    YOU ==>|"aws lambda invoke, three times"| LAM
+    LAM ==>|"Init Duration on the first call only"| LOGS
+
+    classDef aws fill:#FF9900,color:#232F3E,stroke:#CC7A00
+    classDef edge fill:#146EB4,color:#FFFFFF,stroke:#0F5389
+    classDef store fill:#569A31,color:#FFFFFF,stroke:#417525
+    classDef ext fill:#232F3E,color:#FFFFFF,stroke:#131A23
+
+    class EC2,LAM,CW,TA,HD aws
+    class SG edge
+    class S3,EBS,LOGS store
+    class YOU ext
+```
+
+Trusted Advisor and the Health Dashboard sit outside the Region because they
+are account-level. Everything you create tonight is inside one Region and one
+AZ, which is also the list of what to tear down.
+
 ## Steps
 
 - [ ] 1. S3. Create a bucket, upload, version, upload again.

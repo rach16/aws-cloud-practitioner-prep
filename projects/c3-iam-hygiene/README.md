@@ -12,6 +12,49 @@ free.
 
 Does not overlap S7 in the SAA repo, which is Organizations, SCPs and Config.
 
+## How it fits together
+
+```mermaid
+graph TB
+    subgraph AWS["AWS account"]
+        subgraph IAM["IAM"]
+            ROOT["Root user<br/>MFA on, no access keys"]
+            U["User: clf-test<br/>console password, no keys"]
+            G["Group: clf-readers"]
+            MP["Managed policy: ReadOnlyAccess<br/>Allow s3:List*, ec2:Describe*, ..."]
+            IP["Inline policy: deny-s3<br/>Deny s3:*"]
+            SIM["Policy simulator"]
+            AA["Access Analyzer<br/>zone of trust: this account"]
+        end
+        CT["CloudTrail event history<br/>90 days, management events, free"]
+        EXT["Anything shared outside the account"]
+    end
+    D1["Explicit deny wins"]
+    D2["Default is deny"]
+    U ==> G
+    G ==> MP
+    G ==> IP
+    U -.->|"simulate-principal-policy"| SIM
+    SIM ==>|"s3:ListAllMyBuckets: allowed, then explicitDeny"| D1
+    SIM ==>|"ec2:TerminateInstances: implicitDeny"| D2
+    ROOT -.->|"CreateUser is recorded"| CT
+    AA -.->|"findings"| EXT
+
+    classDef aws fill:#FF9900,color:#232F3E,stroke:#CC7A00
+    classDef edge fill:#146EB4,color:#FFFFFF,stroke:#0F5389
+    classDef store fill:#569A31,color:#FFFFFF,stroke:#417525
+    classDef ext fill:#232F3E,color:#FFFFFF,stroke:#131A23
+
+    class ROOT,U,G aws
+    class MP,IP edge
+    class SIM,AA,CT store
+    class D1,D2,EXT ext
+```
+
+Orange is an identity, blue is a policy, green is something that observes
+rather than grants. The user never holds a policy directly: it inherits the
+allow and the deny through the group, and the deny wins.
+
 ## Steps
 
 Replace `ACCOUNT` with the output of

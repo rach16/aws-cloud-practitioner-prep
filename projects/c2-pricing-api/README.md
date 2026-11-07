@@ -10,6 +10,40 @@ it is for `t3.micro` in your region on the day you ran it.
 
 **Time:** 60 to 75 minutes including the write-up.
 
+## How it fits together
+
+```mermaid
+graph LR
+    PY["pricing.py<br/>on your laptop"]
+    subgraph AWS["AWS Global Infrastructure"]
+        subgraph USE1["Region: us-east-1"]
+            PR["Price List API<br/>GetProducts"]
+        end
+        subgraph USW2["Region: us-west-2"]
+            EC2["EC2 API<br/>DescribeSpotPriceHistory"]
+        end
+    end
+    RES["results.md<br/>dated and committed"]
+    PY ==>|"AmazonEC2: t3.micro, Linux, shared tenancy"| PR
+    PY ==>|"AmazonS3: every storage class"| PR
+    PY ==>|"AWSDataTransfer: out, in, between AZs"| PR
+    PY -.->|"Spot is not in the Price List"| EC2
+    PR ==>|"On-Demand and every Reserved term"| RES
+    EC2 ==>|"Spot, per AZ, today"| RES
+
+    classDef aws fill:#FF9900,color:#232F3E,stroke:#CC7A00
+    classDef edge fill:#146EB4,color:#FFFFFF,stroke:#0F5389
+    classDef store fill:#569A31,color:#FFFFFF,stroke:#417525
+    classDef ext fill:#232F3E,color:#FFFFFF,stroke:#131A23
+
+    class PR,EC2 aws
+    class PY,RES ext
+```
+
+The prices are for us-west-2 but the API that publishes them lives in
+us-east-1. Spot prices come from EC2 itself in the Region being priced,
+because they change by the minute and are not a price list.
+
 ## Steps
 
 - [ ] 1. Environment.

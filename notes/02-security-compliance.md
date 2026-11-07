@@ -4,6 +4,38 @@ What it tests: where the shared responsibility line sits for a given service, wh
 
 ## 2.1 Shared responsibility model
 
+```mermaid
+graph TB
+    subgraph CUST["Customer: security IN the cloud"]
+        C1["Customer data: what it is, where it goes, how it is classified"]
+        C2["IAM: users, roles, MFA, access keys, permissions"]
+        C3["Guest OS patching, network configuration, security groups and NACLs"]
+        C4["Encryption: client-side, choosing server-side, in transit"]
+        C5["Application code and anything you install"]
+    end
+    subgraph SHARED["Shared: the line moves with the service"]
+        S1["EC2: you patch the OS. RDS and Lambda: AWS does."]
+        S2["Patch management, configuration management, awareness and training"]
+    end
+    subgraph AWSR["AWS: security OF the cloud"]
+        A1["Software: compute, storage, database, networking"]
+        A2["Hardware and global infrastructure: Regions, AZs, edge locations"]
+        A3["Physical security, hypervisor, the OS under managed services"]
+    end
+    C5 ~~~ S1
+    S2 ~~~ A1
+
+    classDef aws fill:#FF9900,color:#232F3E,stroke:#CC7A00
+    classDef edge fill:#146EB4,color:#FFFFFF,stroke:#0F5389
+    classDef store fill:#569A31,color:#FFFFFF,stroke:#417525
+    classDef ext fill:#232F3E,color:#FFFFFF,stroke:#131A23
+
+    class C1,C2,C3,C4,C5 edge
+    class S1,S2 aws
+    class A1,A2,A3 ext
+```
+
+
 **Memorise:** AWS is responsible for security **of** the cloud. The customer is responsible for security **in** the cloud.
 
 | Layer | AWS | Customer | Shared |
@@ -105,6 +137,39 @@ How the line moves by service:
 - Organizations gives consolidated billing, volume discount tiers pooled across accounts, and shared Reserved Instance / Savings Plan benefits.
 
 ## 2.3 Access management
+
+```mermaid
+graph LR
+    REQ["Request<br/>principal, action, resource"]
+    SCP{"Organizations SCP<br/>allows it?"}
+    DENY{"Explicit Deny<br/>in any applicable policy?"}
+    ALLOW{"An Allow<br/>in an identity or resource policy?"}
+    OUTD["Denied"]
+    OUTA["Allowed"]
+    REQ ==> SCP
+    SCP -->|"no"| OUTD
+    SCP -->|"yes, or no SCP applies"| DENY
+    DENY -->|"yes: explicitDeny"| OUTD
+    DENY -->|"no"| ALLOW
+    ALLOW -->|"no: implicitDeny, the default"| OUTD
+    ALLOW -->|"yes"| OUTA
+
+    classDef aws fill:#FF9900,color:#232F3E,stroke:#CC7A00
+    classDef edge fill:#146EB4,color:#FFFFFF,stroke:#0F5389
+    classDef store fill:#569A31,color:#FFFFFF,stroke:#417525
+    classDef ext fill:#232F3E,color:#FFFFFF,stroke:#131A23
+
+    class SCP,DENY,ALLOW aws
+    class REQ edge
+    class OUTD,OUTA ext
+```
+
+Read it left to right and the three rules fall out: default is deny, an
+explicit deny beats every allow, and an SCP caps what the account can do even
+for its administrators. Permissions boundaries and session policies also have
+to allow, but that is SAA depth. The root user skips identity policies
+entirely, which is why it gets MFA and no keys.
+
 
 ### Root user
 
