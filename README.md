@@ -2,6 +2,7 @@
 
 Exam: **Monday 30 November 2026**. 24 evenings, 60 to 90 minutes each.
 Start at [plan/week-1.md](plan/week-1.md).
+Flashcards for the phone: [rach16.github.io/aws-cloud-practitioner-prep/flashcards](https://rach16.github.io/aws-cloud-practitioner-prep/flashcards/), 276 cards from the notes.
 
 ## Roadmap
 

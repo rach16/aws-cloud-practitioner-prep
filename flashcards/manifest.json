@@ -1,0 +1,8 @@
+{
+  "name": "CLF-C02 flashcards",
+  "short_name": "CLF cards",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#232F3E",
+  "theme_color": "#232F3E"
+}
