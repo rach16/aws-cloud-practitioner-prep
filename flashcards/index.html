@@ -37,6 +37,8 @@
   }
   .chip.on { background: var(--navy); color: #fff; border-color: var(--navy); }
   @media (prefers-color-scheme: dark) { .chip.on { background: var(--aws); color: var(--navy); border-color: var(--aws); } }
+  .domain { font-size: 14px; color: var(--muted); }
+  .domain b { color: var(--ink); font-weight: 600; }
   .stats { display: flex; gap: 14px; color: var(--muted); font-size: 13px; }
   .stats b { color: var(--ink); font-weight: 600; }
   .card {
@@ -74,14 +76,16 @@
   </header>
 
   <div class="chips" id="domains">
-    <button class="chip on" data-d="0">All</button>
+    <button class="chip on" data-d="0">All domains</button>
     <button class="chip" data-d="1">1 Concepts</button>
     <button class="chip" data-d="2">2 Security</button>
     <button class="chip" data-d="3">3 Services</button>
     <button class="chip" data-d="4">4 Billing</button>
+    <button class="chip" data-d="5">Terms</button>
     <button class="chip" id="missedOnly">Missed only</button>
   </div>
 
+  <div class="domain" id="domainName"></div>
   <div class="stats" id="stats"></div>
 
   <div class="card" id="card">
@@ -106,13 +110,21 @@
 <script>
 (function () {
   var KEY = "clf-cards-v1";
+  var DOMAINS = {
+    0: ["All four exam domains", ""],
+    1: ["Domain 1: Cloud Concepts", "24% of the exam"],
+    2: ["Domain 2: Security and Compliance", "30% of the exam"],
+    3: ["Domain 3: Cloud Technology and Services", "34% of the exam"],
+    4: ["Domain 4: Billing, Pricing and Support", "12% of the exam"],
+    5: ["Common terms and definitions", "every domain, learn these first"]
+  };
   var cards = window.CARDS.map(function (c, i) { c.id = hash(c.q); return c; });
   var state = load();           // id -> {s: "got" | "missed", n: times seen}
   var domain = 0, missedOnly = false;
   var queue = [], pos = 0, flipped = false, sessionGot = 0, sessionMissed = 0;
 
   var el = {};
-  ["count","stats","card","topic","text","hint","actions","btnFlip","btnMiss","btnGot","shuffle","reset","missedOnly","domains"]
+  ["count","stats","domainName","card","topic","text","hint","actions","btnFlip","btnMiss","btnGot","shuffle","reset","missedOnly","domains"]
     .forEach(function (id) { el[id] = document.getElementById(id); });
 
   function hash(s) { var h = 5381; for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
@@ -123,6 +135,7 @@
 
   function pool() {
     return cards.filter(function (c) {
+      if (domain === 0 && c.d === 5) return false;   // "All domains" leaves the Terms deck out
       if (domain && c.d !== domain) return false;
       if (missedOnly && status(c) !== "missed") return false;
       return true;
@@ -142,6 +155,8 @@
 
   function render() {
     var p = pool();
+    var dn = DOMAINS[domain];
+    el.domainName.innerHTML = "<b>" + dn[0] + "</b> &middot; " + (dn[1] || p.length + " cards");
     var m = 0, n = 0, g = 0;
     p.forEach(function (c) { var s = status(c); if (s === "missed") m++; else if (s === "new") n++; else g++; });
     el.stats.innerHTML = "<span>missed <b>" + m + "</b></span><span>unseen <b>" + n + "</b></span><span>got <b>" + g + "</b></span>";
@@ -168,7 +183,7 @@
     flipped = false;
     el.count.textContent = (pos + 1) + " / " + queue.length;
     el.card.className = "card";
-    el.topic.innerHTML = "<i>D" + c.d + "</i>" + esc(c.t) + (status(c) === "missed" ? " &middot; missed before" : "");
+    el.topic.innerHTML = "<i>" + (c.d === 5 ? "Term" : "Domain " + c.d) + "</i>" + esc(c.t) + (status(c) === "missed" ? " &middot; missed before" : "");
     el.text.textContent = c.q;
     el.hint.textContent = "Tap to reveal";
     el.actions.className = "actions one";
